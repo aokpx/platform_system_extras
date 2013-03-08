@@ -29,10 +29,6 @@ ifeq ($(HAVE_SELINUX), true)
   LOCAL_CFLAGS += -DHAVE_SELINUX
 endif # HAVE_SELINUX
 
-ifeq ($(BOARD_SUPPRESS_EMMC_WIPE),true)
-    LOCAL_CFLAGS += -DSUPPRESS_EMMC_WIPE
-endif
-
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 
@@ -51,10 +47,6 @@ else
     LOCAL_STATIC_LIBRARIES += libselinux
     LOCAL_CFLAGS += -DHAVE_SELINUX
   endif # HAVE_SELINUX
-endif
-
-ifeq ($(BOARD_SUPPRESS_EMMC_WIPE),true)
-    LOCAL_CFLAGS += -DSUPPRESS_EMMC_WIPE
 endif
 
 include $(BUILD_HOST_EXECUTABLE)
@@ -78,6 +70,11 @@ ifeq ($(HAVE_SELINUX), true)
   LOCAL_SHARED_LIBRARIES += libselinux
   LOCAL_CFLAGS += -DHAVE_SELINUX
 endif # HAVE_SELINUX
+
+ifeq ($(BOARD_SUPPRESS_EMMC_WIPE),true)
+    LOCAL_CFLAGS += -DSUPPRESS_EMMC_WIPE
+endif
+
 include $(BUILD_SHARED_LIBRARY)
 
 
@@ -92,6 +89,11 @@ ifeq ($(HAVE_SELINUX), true)
   LOCAL_STATIC_LIBRARIES += libselinux
   LOCAL_CFLAGS += -DHAVE_SELINUX
 endif # HAVE_SELINUX
+
+ifeq ($(BOARD_SUPPRESS_EMMC_WIPE),true)
+    LOCAL_CFLAGS += -DSUPPRESS_EMMC_WIPE
+endif
+
 include $(BUILD_STATIC_LIBRARY)
 
 
@@ -106,7 +108,6 @@ ifeq ($(HAVE_SELINUX), true)
 endif # HAVE_SELINUX
 include $(BUILD_EXECUTABLE)
 
-
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := make_ext4fs_main.c
 LOCAL_MODULE := utility_make_ext4fs
@@ -116,12 +117,13 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_CLASS := UTILITY_EXECUTABLES
 LOCAL_MODULE_PATH := $(PRODUCT_OUT)/utilities
 LOCAL_UNSTRIPPED_PATH := $(PRODUCT_OUT)/symbols/utilities
-LOCAL_STATIC_LIBRARIES += libext4_utils libz libcutils libc
-ifeq ($(HAVE_SELINUX), true)
-  LOCAL_C_INCLUDES += external/libselinux/include
-  LOCAL_SHARED_LIBRARIES += libselinux
-  LOCAL_CFLAGS += -DHAVE_SELINUX
-endif # HAVE_SELINUX
+LOCAL_STATIC_LIBRARIES += \
+    libext4_utils_static \
+    libsparse_static \
+    libz \
+    libcutils \
+    libc
+
 include $(BUILD_EXECUTABLE)
 
 include $(CLEAR_VARS)
